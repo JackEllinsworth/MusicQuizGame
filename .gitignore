@@ -1,6 +1,5 @@
 venv/
-db/
-./music_game.db
+music_game.db
 __pycache__
 .idea/
 *.iml
