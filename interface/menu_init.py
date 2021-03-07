@@ -15,12 +15,9 @@ def auth_menu(database: Database):
 
     # Response 1: Login to previous account
     if response == 1:
-        formatting.send_separator_message("AUTHORIZATION: STEP 2")
-        print("Please respond with your account name, or reply with 'menu' to go back.")
-
-        # Retrieves users response for their account name
+        menu.send_title_display("AUTHORIZATION: STEP 2",
+                                "Please respond with your account name, or reply with 'menu' to go back.\n")
         response = menu.get_menu_response(str, None, True)
-
         if response == "Menu": return auth_menu(database)
 
         # Retrieves accounts with that username
@@ -32,12 +29,9 @@ def auth_menu(database: Database):
             return auth_menu(database)
         else:
             # Creates new response menu for the password authentication.
-            formatting.send_separator_message("AUTHORIZATION: STEP 3")
-            print("Please respond with the password for your account, or reply with 'menu' to go back.")
-
-            # Retrieves response and starts again if response is "menu" (lowered)
+            menu.send_title_display("AUTHORIZATION: STEP 3",
+                                    "Please respond with the password for your account, or reply with 'menu' to go back.\n")
             response = menu.get_menu_response(str, None, True)
-
             if response == "Menu": return auth_menu(database)
 
             # Checks which account matches the password with the same username, and logs into main menu.
@@ -58,19 +52,15 @@ def auth_menu(database: Database):
             permission = "Administrator"
 
         # Sends separator message and retrieves user input.
-        formatting.send_separator_message("AUTHORIZATION: STEP 2")
-        print("Please respond with your new account name, or reply with 'menu' to go back.")
-
+        menu.send_title_display("AUTHORIZATION: STEP 2",
+                                "Please respond with your new account name, or reply with 'menu' to go back.\n")
         username = menu.get_menu_response(str, None, True)
-
         if username == "Menu": return auth_menu(database)
 
         # Retrieves account password.
-        formatting.send_separator_message("AUTHORIZATION: STEP 3")
-        print("Please respond with your new account password, or reply with 'menu' to go back.")
-
+        menu.send_title_display("AUTHORIZATION: STEP 3",
+                                "Please respond with your new account password, or reply with 'menu' to go back.\n")
         password = menu.get_menu_response(str, None, True)
-
         if password == "Menu": return auth_menu(database)
 
         # Attempts to create new account (any return false would probably mean that the account

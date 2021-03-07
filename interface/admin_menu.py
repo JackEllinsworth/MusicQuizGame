@@ -17,20 +17,14 @@ def activate(database: Database, account: Account):
 
     # Add Song
     if selected_option == 1:
-        formatting.send_separator_message("ADMIN PANEL: Add Song")
-        print("Please respond with your new song name, or reply with 'menu' to go back.")
-        print()
-
+        menu.send_title_display("ADMIN PANEL: Add Song",
+                                "Please respond with your new song name, or reply with 'menu' to go back.\n")
         song_name = menu.get_menu_response(str, None, True)
-
         if song_name == "Menu": return
 
-        formatting.send_separator_message("ADMIN PANEL: Add Song")
-        print("Please respond with your new song's artist name(s), or reply with 'menu' to go back.")
-        print()
-
+        menu.send_title_display("ADMIN PANEL: Add Song",
+                                "Please respond with your new song's artist name(s), or reply with 'menu' to go back.\n")
         artist_name = menu.get_menu_response(str, None, True)
-
         if artist_name == "Menu": return
 
         success = song_queries.create_new_song(database, song_name, artist_name)
@@ -39,13 +33,11 @@ def activate(database: Database, account: Account):
             return print("[SUCCESS] Created song: " + song_name + " successfully.")
         else:
             return print("[ERR] An error occurred whilst creating the song.")
+
     elif selected_option == 2:
-        formatting.send_separator_message("ADMIN PANEL: Remove Song")
-        print("Please respond with the song name to remove, or reply with 'menu' to go back.")
-        print()
-
+        menu.send_title_display("ADMIN PANEL: Remove Song",
+                                "Please respond with the song name to remove, or reply with 'menu' to go back.\n")
         song_name = menu.get_menu_response(str, None, True)
-
         if song_name == "Menu": return
 
         success = song_queries.remove_song_by_name(database, song_name)
@@ -54,13 +46,11 @@ def activate(database: Database, account: Account):
             return print("[SUCCESS] Removed song: " + song_name + " successfully.")
         else:
             return print("[ERR] An error occurred whilst removing the song.")
+
     elif selected_option == 3:
-        formatting.send_separator_message("ADMIN PANEL: Update Song")
-        print("Please respond with the song name to update, or reply with 'menu' to go back.")
-        print()
-
+        menu.send_title_display("ADMIN PANEL: Update Song",
+                                "Please respond with the song name to update, or reply with 'menu' to go back.\n")
         song_name = menu.get_menu_response(str, None, True)
-
         if song_name == "Menu": return
 
         song = song_queries.get_song_by_name(database, song_name)
@@ -74,12 +64,9 @@ def activate(database: Database, account: Account):
 
         if option == "Menu": return
 
-        formatting.send_separator_message("ADMIN PANEL: Update Song")
-        print("Please respond with the song value to update, or reply with 'menu' to go back.")
-        print()
-
+        menu.send_title_display("ADMIN PANEL: Update Song",
+                                "Please respond with the song value to update, or reply with 'menu' to go back.\n")
         new_value = menu.get_menu_response(str, None, True)
-
         if new_value == "Menu": return
 
         if option == "name":
@@ -93,11 +80,11 @@ def activate(database: Database, account: Account):
             return print("[SUCCESS] Updated song: " + song_name + " successfully.")
         else:
             return print("[ERR] An error occurred whilst updating the song.")
+
     elif selected_option == 4:
         songs = song_queries.get_formatted_songs(database)
-        formatting.send_separator_message("ADMIN PANEL: Display Songs")
-        print("Below are all the current songs stored on the database.")
-        print()
+        menu.send_title_display("ADMIN PANEL: Display Songs",
+                                "Below are all the current songs stored on the database.\n")
 
         for i in range(len(songs)):
             print(songs[i])

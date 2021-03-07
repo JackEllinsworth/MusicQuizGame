@@ -1,10 +1,14 @@
 from handlers.misc import validation, formatting
 
 
-def create_menu(title, description, options, back_menu, display_type):
-    # Send display aspects
+def send_title_display(title, description):
     formatting.send_separator_message(title)
     print(description)
+
+
+def create_menu(title, description, options, back_menu, display_type):
+    # Send display aspects
+    send_title_display(title, description)
 
     # Detects input type (int, str)
     if issubclass(display_type, int):
