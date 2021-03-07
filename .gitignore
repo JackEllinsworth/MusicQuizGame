@@ -1,6 +1,6 @@
 venv/
 db/
-.DS_Store
+./music_game.db
 __pycache__
 .idea/
 *.iml
