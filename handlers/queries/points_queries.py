@@ -29,7 +29,7 @@ def retrieve_global_top(database: Database, amount):
         formatted_str += (" | Points: " + str(row[1]) + " | Time: " + str(row[2]))
         global_top.append(formatted_str)
 
-    cursor.stop()
+    cursor.close()
 
     return global_top
 

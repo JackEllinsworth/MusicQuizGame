@@ -14,8 +14,6 @@ def activate(database: Database, account: Account):
     # Retrieves admin panel option from ADMIN_OPTIONS
     menu.create_menu("ADMIN PANEL", "Please select an option below", ADMIN_OPTIONS, True, int)
     selected_option = menu.get_menu_response(int, [1, len(ADMIN_OPTIONS)], True)
-
-    # Returns to main menu
     if selected_option == "Menu": return
 
     if selected_option == 1:

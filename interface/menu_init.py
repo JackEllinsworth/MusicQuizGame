@@ -2,10 +2,10 @@ from handlers.misc import menu
 from handlers.db.db_models import Account
 from handlers.db.db_manager import Database
 from handlers.queries import account_queries
-from interface import admin_menu
+from interface import admin_menu, score_menu
 
 AUTH_OPTIONS = ["Login", "Create Account"]
-MENU_OPTIONS = ["Play game", "Configuration", "Log-out"]
+MENU_OPTIONS = ["Play game", "Configuration", "View Scores", "Log-out"]
 
 
 def auth_menu(database: Database):
@@ -96,6 +96,8 @@ def main_menu(database: Database, account: Account):
     elif selected_option == 2:
         print("configuration...")
     elif selected_option == 3:
+        score_menu.activate(database, account)
+    elif selected_option == 4:
         print("[SUCCESS] Logging out...")
         return auth_menu(database)
     elif selected_option == 4:
