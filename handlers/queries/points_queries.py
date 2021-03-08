@@ -4,7 +4,7 @@ from handlers.queries import account_queries
 
 
 # Retrieves top global scores
-def retrieve_global_top(database: Database, amount):
+def retrieve_global_top(database: Database, amount: int):
     cursor = database.connection.cursor()
     # Executes SQL query, ordering results by the highest points, limiting to (amount)
     cursor.execute("SELECT userId, points, time FROM POINTS ORDER BY points DESC LIMIT ?", (amount,))
@@ -34,7 +34,7 @@ def retrieve_global_top(database: Database, amount):
     return global_top
 
 
-def retrieve_local_top(database: Database, account: Account, amount):
+def retrieve_local_top(database: Database, account: Account, amount: int):
     cursor = database.connection.cursor()
     # Retrieves users userId
     account_id = account.retrieve("userId")

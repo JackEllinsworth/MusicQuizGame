@@ -1,13 +1,13 @@
 from handlers.misc import validation, formatting
 
 
-def send_title_display(title, description):
+def send_title_display(title: str, description: str):
     # Prints out formatted strings
     formatting.send_separator_message(title)
     print(description)
 
 
-def create_menu(title, description, options, back_menu, display_type):
+def create_menu(title: str, description: str, options: list, back_menu: bool, display_type):
     # Send display aspects
     send_title_display(title, description)
 
@@ -31,7 +31,7 @@ def create_menu(title, description, options, back_menu, display_type):
     print()
 
 
-def get_menu_response(obj_type, pref, back_menu):
+def get_menu_response(obj_type, pref, back_menu: bool):
     validated = False
     success, output = None, None
     valid_pref = pref

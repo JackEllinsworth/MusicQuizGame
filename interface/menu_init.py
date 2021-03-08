@@ -100,7 +100,7 @@ def main_menu(database: Database, account: Account):
     elif selected_option == 4:
         print("[SUCCESS] Logging out...")
         return auth_menu(database)
-    elif selected_option == 4:
+    elif selected_option == 5:
         admin_menu.activate(database, account)
 
     # Restarts menu for additional selection.

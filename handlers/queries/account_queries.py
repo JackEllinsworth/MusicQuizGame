@@ -2,7 +2,7 @@ from handlers.db.db_manager import Database
 from handlers.db.db_models import Account
 
 
-def get_account_by_id(database: Database, user_id):
+def get_account_by_id(database: Database, user_id: int):
     # Creates the cursor and uses sql to execute the SELECT query.
     cursor = database.connection.cursor()
     cursor.execute("SELECT * FROM ACCOUNTS WHERE ID = ?", (user_id,))
@@ -31,7 +31,7 @@ def check_for_admins(database: Database):
         return False
 
 
-def get_account_by_name(database: Database, username):
+def get_account_by_name(database: Database, username: str):
     # Uses SQL Select query to get the accounts via username
     cursor = database.connection.cursor()
     cursor.execute("SELECT * FROM ACCOUNTS WHERE USERNAME = ?", (username,))
@@ -64,7 +64,7 @@ def overwrite_existing_account(database: Database, account: Account):
         return False
 
 
-def create_new_account(database: Database, username, password, permission):
+def create_new_account(database: Database, username: str, password: str, permission: str):
     cursor = database.connection.cursor()
 
     try:

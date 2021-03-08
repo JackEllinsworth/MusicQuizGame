@@ -1,4 +1,4 @@
-def validate_as_int(number, boundaries):
+def validate_as_int(number, boundaries: list):
     try:
         changed = int(number)
         if boundaries[0] <= changed <= boundaries[1]:

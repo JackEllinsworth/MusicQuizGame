@@ -1,4 +1,4 @@
-def send_separator_message(msg):
+def send_separator_message(msg: str):
     print("======== " + msg + " ========")
 
 

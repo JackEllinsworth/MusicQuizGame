@@ -2,7 +2,7 @@ from handlers.db.db_manager import Database
 from handlers.db.db_models import Song
 
 
-def retrieve_random_songs(database: Database, amount):
+def retrieve_random_songs(database: Database, amount: int):
     # Retrieves random songs via SQL query, and returns results as song object
     cursor = database.connection.cursor()
     cursor.execute("SELECT * FROM SONGS ORDER BY RANDOM() LIMIT ?", (amount,))
@@ -32,7 +32,7 @@ def get_formatted_songs(database: Database):
     return formatted_list
 
 
-def get_song_by_name(database: Database, song_name):
+def get_song_by_name(database: Database, song_name: str):
     cursor = database.connection.cursor()
     cursor.execute("SELECT * FROM SONGS WHERE NAME = ?", (song_name,))
     song = cursor.fetchone()
@@ -62,7 +62,7 @@ def overwrite_existing_song(database: Database, song: Song):
         return False
 
 
-def create_new_song(database: Database, name, artist):
+def create_new_song(database: Database, name: str, artist: str):
     cursor = database.connection.cursor()
 
     try:
@@ -85,7 +85,7 @@ def create_new_song(database: Database, name, artist):
         return False
 
 
-def remove_song_by_name(database: Database, song_name):
+def remove_song_by_name(database: Database, song_name: str):
     cursor = database.connection.cursor()
 
     try:

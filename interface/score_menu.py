@@ -1,4 +1,4 @@
-from handlers.db.db_models import Account, Points
+from handlers.db.db_models import Account
 from handlers.db.db_manager import Database
 from handlers.queries import points_queries
 from handlers.misc import menu
