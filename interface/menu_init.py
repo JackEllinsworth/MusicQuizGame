@@ -1,4 +1,4 @@
-from handlers.misc import formatting, menu
+from handlers.misc import menu
 from handlers.db.db_models import Account
 from handlers.db.db_manager import Database
 from handlers.queries import account_queries

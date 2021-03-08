@@ -2,6 +2,7 @@ from handlers.misc import validation, formatting
 
 
 def send_title_display(title, description):
+    # Prints out formatted strings
     formatting.send_separator_message(title)
     print(description)
 
