@@ -1,76 +1,121 @@
-from handlers.misc import validation, formatting
+from handlers.misc import formatting, validation
+
+TEMPLATE_FIELDS = [
+    {
+        "description": "desc",  # Description for display
+        "options": [],  # Options to display (for str, display options and valid response list)
+        "response_type": int,  # Type of response required (supporting int and str)
+        "back_menu": True  # True/False, weather back menu is enabled to cancel menu
+    }
+]
 
 
-def send_title_display(title: str, description: str):
-    # Prints out formatted strings
-    formatting.send_separator_message(title)
-    print(description)
+class Menu:
 
+    def __init__(self, title, fields):
+        self.title = title
+        self.fields = fields
+        self.responses = []
 
-def create_menu(title: str, description: str, options: list, back_menu: bool, display_type):
-    # Send display aspects
-    send_title_display(title, description)
+    def get_responses(self):
+        # Goes through each field for menu
+        for num in range(len(self.fields)):
+            # Sends menu display
+            self.send(num)
+            success, response = None, None
 
-    # Detects input type (int, str)
-    if issubclass(display_type, int):
-        # Displays menu options, format: "index) option"
-        for i in range(len(options)):
-            print(str(i+1) + ") " + options[i])
-        # Displays back menu option if enabled.
-        if back_menu:
-            print(str(len(options)+1) + ") Menu")
+            # Retrieves user input until success
+            while not success:
+                success, response = self.receive(num)
+                # If related to menu response, return to previous menu
+                if issubclass(self.fields[num]["response_type"], int) \
+                        and response == len(self.fields[num]["options"])+1 and self.fields[num]["back_menu"]:
+                    return False, None
+                elif issubclass(self.fields[num]["response_type"], str) and self.fields[num]["back_menu"] and \
+                        response.lower() == "menu":
+                    return False, None
 
-    elif issubclass(display_type, str):
-        # Displays menu options, format "- option"
-        for i in range(len(options)):
-            print("-", options[i])
-        # Displays back menu option if enabled.
-        if back_menu:
-            print("- Menu")
+            # Append response
+            self.responses.append(response)
 
-    print()
+        # Return responses and success
+        return True, self.responses
 
+    def send(self, field_num):
+        field = self.fields[field_num]
+        options = field["options"]
+        back_menu = field["back_menu"]
+        response_type = field["response_type"]
 
-def get_menu_response(obj_type, pref, back_menu: bool):
-    validated = False
-    success, output = None, None
-    valid_pref = pref
+        # Send Title
+        formatting.send_separator_message(self.title)
 
-    # Repeats process of asking for response until validation success
-    while not validated:
-        response = input("Enter response: ")
+        # Send Description
+        print(field["description"])
 
-        # Detects int class requirement
-        if issubclass(obj_type, int):
-            # If back menu enabled, it increments the validation boundaries with another index level.
+        # Detects input type (int, str)
+        if issubclass(response_type, int):
+            # Displays menu options, format: "index) option"
+            for i in range(len(options)):
+                print(str(i + 1) + ") " + options[i])
+            # Displays back menu option if enabled.
             if back_menu:
-                valid_pref[1] += 1
-            # Validation output
-            success, output = validation.validate_as_int(response, valid_pref)
-        # Detects str class requirement
-        elif issubclass(obj_type, str):
-            # Returns response if no pref
-            if pref:
-                # If back menu enabled, it appends another option to the pref list, making it valid.
+                print(str(len(options) + 1) + ") Menu")
+
+        elif issubclass(response_type, str):
+            if options:
+                # Displays menu options, format "- option"
+                for i in range(len(options)):
+                    print("-", options[i])
+                # Displays back menu option if enabled.
                 if back_menu:
-                    valid_pref.append("Menu")
-                selection = [item.lower() for item in pref]
-                # Lowers selections, and compares to see if the index is in the list.
-                if response.lower() in selection:
-                    # Returns the result choice in the pref list by the index of the lowered comparison.
-                    success, output = True, pref[selection.index(response.lower())]
-            else:
-                success, output = True, response
+                    print("- Menu")
 
+        print()
+
+    def receive(self, page_num):
+        validated = False
+        success, output = None, None
+        field = self.fields[page_num]
+        back_menu = field["back_menu"]
+        options = field["options"]
+        response_type = field["response_type"]
+
+        if options:
+            options = options.copy()
+
+        # Retrieves user input until validated
+        while not validated:
+            response = input("Enter response: ")
+
+            # If integer type, retrieves boundaries, adds back menu to boundary if existent, updates success & output
+            # Validates and integer
+            if issubclass(response_type, int):
+                boundaries = [1, len(options)]
                 if back_menu:
-                    if response.lower() == "menu":
-                        success, output = True, "Menu"
+                    boundaries[1] += 1
+                success, output = validation.validate_as_int(response, boundaries)
 
-        # Changes/updates the validation status to the success of the
-        validated = success
+            # If string type, checks to see if options, if not returns success due to no limits
+            elif issubclass(response_type, str):
+                if options:
+                    # Appends menu to options to respond to, as back_menu is true
+                    if back_menu:
+                        options.append("Menu")
 
-        if not success:
-            validation.error()
+                    # Lowers all options for string comparison
+                    lowered_options = [item.lower() for item in options]
+                    # Detects if string is in lowered array, and then returns the formatted string in the options arr
+                    if response.lower() in lowered_options:
+                        success, output = True, options[lowered_options.index(response.lower())]
+                else:
+                    # Update success and output as true and the normal response (no modifications)
+                    success, output = True, response
 
-    print()
-    return output
+            validated = success
+
+            if not success:
+                validation.error()
+
+        print()
+        return success, output

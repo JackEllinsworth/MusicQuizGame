@@ -1,4 +1,4 @@
-from handlers.misc import menu
+from handlers.misc.menu import Menu
 from handlers.db.db_models import Account
 from handlers.db.db_manager import Database
 from interface import auth_menu
@@ -16,8 +16,17 @@ def activate(database: Database, account: Account):
         options.append("Admin Panel")
 
     # Displays options and retrieves input
-    menu.create_menu("MAIN MENU", "Please select an option below", options, False, int)
-    selected_option = menu.get_menu_response(int, [1, len(options)], False)
+    menu = Menu("MAIN MENU", [
+        {
+            "description": "Please select an option below",
+            "options": options,
+            "response_type": int,
+            "back_menu": False
+        }
+    ])
+
+    success, responses = menu.get_responses()
+    selected_option = responses[0]
 
     if selected_option == 1:
         print("playing game...")

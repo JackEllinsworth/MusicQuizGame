@@ -1,4 +1,4 @@
-from handlers.misc import menu
+from handlers.misc.menu import Menu
 from handlers.db.db_manager import Database
 from handlers.queries import account_queries
 from interface import menu_init
@@ -24,26 +24,40 @@ def login(database: Database, username, password):
 
 
 def activate(database: Database):
-    # Creates default main menu
-    menu.create_menu("AUTHORIZATION: STEP 1", "Please respond with your choice below.", AUTH_OPTIONS, False, int)
-    response = menu.get_menu_response(int, [1, len(AUTH_OPTIONS)], False)
+    menu = Menu("AUTHORIZATION: STEP 1", [
+        {
+            "description": "Please respond with your choice below.",
+            "options": AUTH_OPTIONS,
+            "response_type": int,
+            "back_menu": False
+        }
+    ])
+
+    success, selected_option = menu.get_responses()
+    selected_option = selected_option[0]
 
     # Response 1: Login to previous account
-    if response == 1:
-        # Creates new response menu for username authentication
-        menu.send_title_display("AUTHORIZATION: STEP 2",
-                                "Please respond with your account name, or reply with 'menu' to go back.\n")
-        username = menu.get_menu_response(str, None, True)
-        if username == "Menu": return activate(database)
+    if selected_option == 1:
+        menu = Menu("AUTHORIZATION", [
+            {
+                "description": "Please respond with your account name (reply with 'menu' to cancel)",
+                "options": None,
+                "response_type": str,
+                "back_menu": True
+            },
+            {
+                "description": "Please respond with the password for your account (reply with 'menu' to cancel)",
+                "options": None,
+                "response_type": str,
+                "back_menu": True
+            }
+        ])
 
-        # Creates new response menu for the password authentication.
-        menu.send_title_display("AUTHORIZATION: STEP 3",
-                                "Please respond with the password for your account, or reply with 'menu' to go back.\n")
-        password = menu.get_menu_response(str, None, True)
-        if password == "Menu": return activate(database)
+        success, responses = menu.get_responses()
+        if not success: return activate(database)
 
         # Attempts to login to account, and authenticate
-        login_success, account = login(database, username, password)
+        login_success, account = login(database, responses[0], responses[1])
 
         if not login_success:
             return activate(database)
@@ -51,7 +65,7 @@ def activate(database: Database):
             return menu_init.activate(database, account)
 
     # Response 2: Create account
-    elif response == 2:
+    elif selected_option == 2:
         # Checks for admin accounts, if there is non the next new account will be admin
         admins_check = account_queries.check_for_admins(database)
         permission = "Normal"
@@ -59,22 +73,28 @@ def activate(database: Database):
         if not admins_check:
             permission = "Administrator"
 
-        # Sends separator message and retrieves user input.
-        menu.send_title_display("AUTHORIZATION: STEP 2",
-                                "Please respond with your new account name, or reply with 'menu' to go back.\n")
-        username = menu.get_menu_response(str, None, True)
-        if username == "Menu": return activate(database)
+        menu = Menu("AUTHORIZATION", [
+            {
+                "description": "Please respond with your new account name (reply with 'menu' to cancel)",
+                "options": None,
+                "response_type": str,
+                "back_menu": True
+            },
+            {
+                "description": "Please respond with your new account password (reply with 'menu' to cancel)",
+                "options": None,
+                "response_type": str,
+                "back_menu": True
+            }
+        ])
 
-        # Retrieves account password.
-        menu.send_title_display("AUTHORIZATION: STEP 3",
-                                "Please respond with your new account password, or reply with 'menu' to go back.\n")
-        password = menu.get_menu_response(str, None, True)
-        if password == "Menu": return activate(database)
+        success, responses = menu.get_responses()
+        if not success: return activate(database)
 
         # Attempts to create new account (any return false would probably mean that the account
         # exists already with the same user & password.
         # This system supports multiple accounts with the same username, as long as they don't have the same password.
-        success = account_queries.create_new_account(database, username, password, permission)
+        success = account_queries.create_new_account(database, responses[0], responses[1], permission)
 
         # Displays type of account created, and success/fail
         if success:
@@ -84,7 +104,7 @@ def activate(database: Database):
                 print("[SUCCESS] Successfully created new account")
 
             # Logs into account after creation, and displays menu
-            login_success, account = login(database, username, password)
+            login_success, account = login(database, responses[0], responses[1])
 
             if login_success:
                 return menu_init.activate(database, account)
