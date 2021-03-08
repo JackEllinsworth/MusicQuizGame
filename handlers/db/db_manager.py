@@ -49,6 +49,3 @@ class Database:
     def save(self):
         # Commits changes to database
         self.connection.commit()
-
-
-
