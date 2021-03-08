@@ -1,9 +1,9 @@
 from handlers.db.db_manager import Database
-from interface import menu_init
+from interface import auth_menu
 
 # Load data & initialize connection
 db_obj = Database()
 db_obj.load()
 
 # Initializes authorization menu
-menu_init.auth_menu(db_obj)
+auth_menu.activate(db_obj)
