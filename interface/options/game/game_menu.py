@@ -26,9 +26,14 @@ def activate(database: Database, account: Account):
     songs = song_queries.get_all_songs_randomized(database)
     next_song_index = 0
 
-    while play_again:
-        play_again = False
+    def end_game_display_save():
+        if SAVE_POINTS:
+            score_set = Points(account.retrieve("userId"), user_points)
+            points_queries.create_score_set(database, score_set)
+        print("[END] You scored a total of " + str(user_points) +
+              " point(s)! - Saved if enabled; Thanks for playing!")
 
+    while play_again:
         # Re-order songs & ensure all songs are different until restart
         unique_song, new_index = None, None
         next_song_index += 1
@@ -62,20 +67,17 @@ def activate(database: Database, account: Account):
         if user_points <= 0:
             return print("[END] Game over - no points scored")
 
-        if not success: return
-
-        def end_game_display_save():
-            if SAVE_POINTS:
-                score_set = Points(account.retrieve("userId"), user_points)
-                points_queries.create_score_set(database, score_set)
-            print("[END] You scored a total of " + str(user_points) +
-                  " point(s)! - Saved if enabled; Thanks for playing!")
+        if not success: return end_game_display_save()
 
         # User guessed correctly, so user can play again
-        if guessed_correctly:
+        if not guessed_correctly:
+            # Ends game automatically due to failure to guess song after 2 guesses
+            print("[END] Ending game - 2 failed guesses")
+            end_game_display_save()
+
             menu = Menu("GAME MENU: Play again?", [
                 {
-                    "description": "Would you like to play again?",
+                    "description": "Would you like to have an other attempt?",
                     "options": ["Yes", "No"],
                     "response_type": int,
                     "back_menu": False
@@ -87,15 +89,8 @@ def activate(database: Database, account: Account):
             response = responses[0]
 
             if response == 1:
-                # Reactivates rounds
-                play_again = True
-                print("[END] Playing another round... (your score will be added altogether)")
+                print("[END] Playing again...")
+                return activate(database, account)
             elif response == 2:
-                # Ends the game and saves final score.
-                end_game_display_save()
                 return
-        else:
-            # Ends game automatically due to failure to guess song after 2 guesses
-            print("[END] Ending game - 2 failed guesses")
-            end_game_display_save()
-            return
+
