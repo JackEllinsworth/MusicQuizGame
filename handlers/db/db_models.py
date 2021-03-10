@@ -21,7 +21,7 @@ class Song:
 # Points interface
 class Points:
 
-    def __init__(self, user_id: str, points: int):
+    def __init__(self, user_id: int, points: int):
         self.data = {
             "userId": user_id,
             "points": points,

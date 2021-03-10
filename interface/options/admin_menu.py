@@ -1,9 +1,9 @@
 from handlers.db.db_models import Account
 from handlers.db.db_manager import Database
-from handlers.queries import song_queries
+from handlers.queries import song_queries, account_queries
 from handlers.misc.menu import Menu, formatting
 
-ADMIN_OPTIONS = ["Add Song", "Remove Song", "Update Song", "Display Songs"]
+ADMIN_OPTIONS = ["Add Song", "Remove Song", "Update Song", "Display Songs", "Give User Admin"]
 INNER_SONG_OPTIONS = ["Name", "Artist"]
 
 
@@ -130,3 +130,56 @@ def activate(database: Database, account: Account):
         print()
 
         return
+    elif selected_option == 5:
+        success_update = False
+
+        menu = Menu("ADMIN PANEL: Give User Admin", [
+            {
+                "description": "Please respond with username of the person to give administrator privileges"
+                               " (reply with 'menu' to cancel)",
+                "options": None,
+                "response_type": str,
+                "back_menu": True
+            }
+        ])
+
+        success, responses = menu.get_responses()
+        if not success: return
+
+        accounts = account_queries.get_account_by_name(database, responses[0])
+
+        if not accounts: return print("[ERR] No accounts have been found matching that name")
+
+        if len(accounts) > 1:
+            accountIds = []
+
+            for i in range(len(accounts)):
+                accountIds.append(str(accounts[i].retrieve("userId")))
+
+            menu = Menu("ADMIN PANEL: Give User Admin > Selection", [
+                {
+                    "description": "Please respond with what userId you want to give administrator privileges",
+                    "options": accountIds,
+                    "response_type": int,
+                    "back_menu": True
+                }
+            ])
+
+            success_selec, response_selec = menu.get_responses()
+            if not success_selec: return
+
+            account = account_queries.get_account_by_id(database, accountIds[response_selec[0]-1])
+            if account:
+                account.update("permission", "Administrator")
+                success_update = account_queries.overwrite_existing_account(database, account)
+
+        else:
+            account = accounts[0]
+            account.update("permission", "Administrator")
+            success_update = account_queries.overwrite_existing_account(database, account)
+
+        if success_update:
+            return print("[SUCCESS] Updated account matching userId " + str(account.retrieve("userId")) +
+                         " permission to Administrator.")
+        else:
+            return print("[ERR] An error occurred whilst changing that users permission.")

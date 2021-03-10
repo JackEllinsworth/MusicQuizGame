@@ -2,17 +2,17 @@ from handlers.db.db_manager import Database
 from handlers.db.db_models import Song
 
 
-def retrieve_random_songs(database: Database, amount: int):
-    # Retrieves random songs via SQL query, and returns results as song object
+def get_all_songs_randomized(database: Database):
     cursor = database.connection.cursor()
-    cursor.execute("SELECT * FROM SONGS ORDER BY RANDOM() LIMIT ?", (amount,))
+    cursor.execute("SELECT * FROM SONGS ORDER BY RANDOM()")
     results = cursor.fetchall()
     songs = []
 
-    # Appends songs as object to songs array
     for row in results:
         song = Song(row[0], row[1], row[2])
         songs.append(song)
+
+    cursor.close()
 
     return songs
 

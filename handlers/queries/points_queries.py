@@ -13,7 +13,7 @@ def retrieve_global_top(database: Database, amount: int):
 
     # Iterates through results
     for row in results:
-        formatted_str = None
+        formatted_str = ""
         # Retrieves account matching data
         user_acc = account_queries.get_account_by_id(database, row[0])
 
@@ -47,7 +47,7 @@ def retrieve_local_top(database: Database, account: Account, amount: int):
 
     for row in cursor:
         # Appends all results to table, ready for display
-        formatted_str = None
+        formatted_str = ""
         formatted_str += ("Points: " + str(row[1]) + " | Time: " + str(row[2]))
         local_top.append(formatted_str)
 
